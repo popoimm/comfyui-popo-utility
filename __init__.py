@@ -1,50 +1,41 @@
 """
-ComfyUI Popo Utility - 自定义节点包初始化文件
-使用模块化系统自动注册所有节点
+ComfyUI Popo Utility - 简化版直接导入
+这是一个完全兼容ComfyUI的简化版本
 """
 
-import sys
-import os
-
-# 确保能够找到nodes包
-current_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, current_dir)
-
+# 直接导入节点类
 try:
-    # 尝试相对导入
-    from .nodes import auto_register_nodes
+    from .nodes_direct import (
+        PopoImageSizeNode,
+        PopoImageDimensionsNode, 
+        PopoImageAspectRatioNode
+    )
 except ImportError:
-    # 如果相对导入失败，使用绝对导入
-    from nodes.registry import auto_register_nodes
+    from nodes_direct import (
+        PopoImageSizeNode,
+        PopoImageDimensionsNode, 
+        PopoImageAspectRatioNode
+    )
 
-# 自动发现并注册所有节点
-NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS = auto_register_nodes()
+# ComfyUI需要的映射
+NODE_CLASS_MAPPINGS = {
+    "PopoImageSizeNode": PopoImageSizeNode,
+    "PopoImageDimensionsNode": PopoImageDimensionsNode,
+    "PopoImageAspectRatioNode": PopoImageAspectRatioNode,
+}
 
-# 导出节点映射，供ComfyUI加载
-__all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS']
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "PopoImageSizeNode": "Popo Image Size",
+    "PopoImageDimensionsNode": "Popo Image Dimensions", 
+    "PopoImageAspectRatioNode": "Popo Image Aspect Ratio",
+}
 
 # 版本信息
-__version__ = "1.0.0"
-__author__ = "Popo Utility Team"
-__description__ = "ComfyUI图片处理实用工具集 - 模块化可扩展版本"
+__version__ = "1.0.1"
 
-# ComfyUI会寻找这些变量来注册节点
-WEB_DIRECTORY = "./web"  # 如果有前端文件的话
+# 简化的加载信息
+print(f"Popo Utility v{__version__} - Simple version loaded!")
+print(f"Nodes: {list(NODE_DISPLAY_NAME_MAPPINGS.values())}")
 
-# 打印加载信息
-print(f"🚀 Popo Utility v{__version__} 加载完成")
-print(f"📦 已注册 {len(NODE_CLASS_MAPPINGS)} 个节点")
-
-# 按类别显示节点信息
-try:
-    from .nodes import get_registry
-except ImportError:
-    from nodes.registry import get_registry
-registry = get_registry()
-categories = registry.list_nodes_by_category()
-
-for category, nodes in categories.items():
-    print(f"📂 {category}: {len(nodes)} 个节点")
-    for node in nodes:
-        display_name = NODE_DISPLAY_NAME_MAPPINGS.get(node, node)
-        print(f"   - {display_name}")
+# 导出给ComfyUI
+__all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS']
