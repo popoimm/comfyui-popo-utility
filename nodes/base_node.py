@@ -66,7 +66,7 @@ class ImageProcessingNode(PopoBaseNode):
     为图片处理相关的节点提供通用功能
     """
     
-    CATEGORY = "popo-utility/image"
+    CATEGORY = "popo-utility"
     
     def get_image_dimensions(self, image) -> Tuple[int, int]:
         """
@@ -117,7 +117,7 @@ class UtilityNode(PopoBaseNode):
     为通用工具类节点提供基础功能
     """
     
-    CATEGORY = "popo-utility/utils"
+    CATEGORY = "popo-utility"
 
 
 class TextProcessingNode(PopoBaseNode):
@@ -126,7 +126,7 @@ class TextProcessingNode(PopoBaseNode):
     为文本处理相关的节点提供通用功能
     """
     
-    CATEGORY = "popo-utility/text"
+    CATEGORY = "popo-utility"
 
 
 class MathNode(PopoBaseNode):
@@ -135,4 +135,4 @@ class MathNode(PopoBaseNode):
     为数学计算相关的节点提供通用功能
     """
     
-    CATEGORY = "popo-utility/math"
+    CATEGORY = "popo-utility"

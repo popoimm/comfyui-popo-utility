@@ -1,0 +1,69 @@
+{
+  "ImageSizeNode": {
+    "display_name": "Image Size",
+    "category": "popo-utility",
+    "input_types": {
+      "required": {
+        "image": [
+          "IMAGE"
+        ]
+      }
+    },
+    "return_types": [
+      "INT",
+      "INT"
+    ],
+    "return_names": [
+      "long_side",
+      "short_side"
+    ],
+    "function": "get_image_size",
+    "description": "获取图片的长边和短边尺寸，性能优化版本"
+  },
+  "ImageDimensionsNode": {
+    "display_name": "Image Dimensions",
+    "category": "popo-utility",
+    "input_types": {
+      "required": {
+        "image": [
+          "IMAGE"
+        ]
+      }
+    },
+    "return_types": [
+      "INT",
+      "INT",
+      "INT",
+      "INT"
+    ],
+    "return_names": [
+      "width",
+      "height",
+      "long_side",
+      "short_side"
+    ],
+    "function": "get_dimensions",
+    "description": "获取图片的详细尺寸信息：宽度、高度、长边、短边"
+  },
+  "ImageAspectRatioNode": {
+    "display_name": "Image Aspect Ratio",
+    "category": "popo-utility",
+    "input_types": {
+      "required": {
+        "image": [
+          "IMAGE"
+        ]
+      }
+    },
+    "return_types": [
+      "FLOAT",
+      "STRING"
+    ],
+    "return_names": [
+      "aspect_ratio",
+      "ratio_name"
+    ],
+    "function": "calculate_aspect_ratio",
+    "description": "计算图片的宽高比和识别常见比例类型"
+  }
+}

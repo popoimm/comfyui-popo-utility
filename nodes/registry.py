@@ -119,22 +119,10 @@ class NodeRegistry:
             if display_name_attr:
                 return str(display_name_attr)
         
-        # 根据功能类型添加emoji前缀
-        if 'Image' in class_name:
-            emoji = '🖼️'
-        elif 'Text' in class_name:
-            emoji = '📝'
-        elif 'Math' in class_name:
-            emoji = '🔢'
-        elif 'Utils' in class_name or 'Utility' in class_name:
-            emoji = '🔧'
-        else:
-            emoji = '⚙️'
-        
         # 将驼峰命名转换为可读名称
         readable_name = self._camel_to_readable(class_name)
         
-        return f"{emoji} {readable_name}"
+        return readable_name
     
     def _camel_to_readable(self, camel_str: str) -> str:
         """
