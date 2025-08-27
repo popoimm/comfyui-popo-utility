@@ -3,7 +3,19 @@ ComfyUI Popo Utility - 自定义节点包初始化文件
 使用模块化系统自动注册所有节点
 """
 
-from .nodes import auto_register_nodes
+import sys
+import os
+
+# 确保能够找到nodes包
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, current_dir)
+
+try:
+    # 尝试相对导入
+    from .nodes import auto_register_nodes
+except ImportError:
+    # 如果相对导入失败，使用绝对导入
+    from nodes.registry import auto_register_nodes
 
 # 自动发现并注册所有节点
 NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS = auto_register_nodes()
@@ -24,7 +36,10 @@ print(f"🚀 Popo Utility v{__version__} 加载完成")
 print(f"📦 已注册 {len(NODE_CLASS_MAPPINGS)} 个节点")
 
 # 按类别显示节点信息
-from .nodes import get_registry
+try:
+    from .nodes import get_registry
+except ImportError:
+    from nodes.registry import get_registry
 registry = get_registry()
 categories = registry.list_nodes_by_category()
 

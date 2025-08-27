@@ -5,7 +5,7 @@ ComfyUI Popo Utility - 节点注册系统
 
 import importlib
 import pkgutil
-from typing import Dict, Any, List, Type
+from typing import Dict, Any, List, Type, Optional
 from .base_node import PopoBaseNode
 
 
@@ -24,17 +24,21 @@ class NodeRegistry:
         """
         自动发现nodes包下的所有节点
         """
-        import nodes as nodes_package
+        import sys
+        import os
+        
+        # 获取当前nodes包的路径
+        current_dir = os.path.dirname(__file__)
         
         # 遍历nodes包下的所有模块
-        for importer, modname, ispkg in pkgutil.iter_modules(nodes_package.__path__):
+        for importer, modname, ispkg in pkgutil.iter_modules([current_dir]):
             if modname.startswith('_') or modname == 'registry':
                 continue  # 跳过私有模块和注册模块本身
                 
             try:
                 # 动态导入模块
-                full_module_name = f"nodes.{modname}"
-                module = importlib.import_module(full_module_name)
+                # 使用相对导入来避免冲突
+                module = importlib.import_module(f".{modname}", package="nodes")
                 
                 # 查找模块中的NODE_CLASSES列表
                 if hasattr(module, 'NODE_CLASSES'):
@@ -83,7 +87,9 @@ class NodeRegistry:
         """
         # 尝试从类中获取显示名称
         if hasattr(node_class, 'DISPLAY_NAME'):
-            return node_class.DISPLAY_NAME
+            display_name_attr = getattr(node_class, 'DISPLAY_NAME', None)
+            if display_name_attr:
+                return str(display_name_attr)
         
         # 根据功能类型添加emoji前缀
         if 'Image' in class_name:
@@ -139,7 +145,7 @@ class NodeRegistry:
         """
         return self.categories.copy()
     
-    def register_manual_node(self, node_class: Type[PopoBaseNode], display_name: str = None) -> None:
+    def register_manual_node(self, node_class: Type[PopoBaseNode], display_name: Optional[str] = None) -> None:
         """
         手动注册单个节点
         """
