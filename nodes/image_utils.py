@@ -14,6 +14,9 @@ class ImageSizeNode(ImageProcessingNode):
     """
     
     DESCRIPTION = "获取图片的长边和短边尺寸，性能优化版本"
+    RETURN_TYPES = ("INT", "INT")
+    RETURN_NAMES = ("long_side", "short_side")
+    FUNCTION = "get_image_size"
     
     @classmethod
     def INPUT_TYPES(cls):
@@ -23,18 +26,6 @@ class ImageSizeNode(ImageProcessingNode):
                 "image": ("IMAGE",),  # ComfyUI 标准图片输入
             }
         }
-    
-    @property
-    def RETURN_TYPES(self) -> Tuple:
-        return ("INT", "INT")
-    
-    @property
-    def RETURN_NAMES(self) -> Tuple:
-        return ("long_side", "short_side")
-    
-    @property
-    def FUNCTION(self) -> str:
-        return "get_image_size"
     
     def get_image_size(self, image):
         """
@@ -73,6 +64,9 @@ class ImageDimensionsNode(ImageProcessingNode):
     """
     
     DESCRIPTION = "获取图片的详细尺寸信息：宽度、高度、长边、短边"
+    RETURN_TYPES = ("INT", "INT", "INT", "INT")
+    RETURN_NAMES = ("width", "height", "long_side", "short_side")
+    FUNCTION = "get_dimensions"
     
     @classmethod
     def INPUT_TYPES(cls):
@@ -81,18 +75,6 @@ class ImageDimensionsNode(ImageProcessingNode):
                 "image": ("IMAGE",),
             }
         }
-    
-    @property
-    def RETURN_TYPES(self) -> Tuple:
-        return ("INT", "INT", "INT", "INT")
-    
-    @property
-    def RETURN_NAMES(self) -> Tuple:
-        return ("width", "height", "long_side", "short_side")
-    
-    @property
-    def FUNCTION(self) -> str:
-        return "get_dimensions"
     
     def get_dimensions(self, image):
         """
@@ -131,6 +113,9 @@ class ImageAspectRatioNode(ImageProcessingNode):
     """
     
     DESCRIPTION = "计算图片的宽高比和识别常见比例类型"
+    RETURN_TYPES = ("FLOAT", "STRING")
+    RETURN_NAMES = ("aspect_ratio", "ratio_name")
+    FUNCTION = "calculate_aspect_ratio"
     
     @classmethod
     def INPUT_TYPES(cls):
@@ -139,18 +124,6 @@ class ImageAspectRatioNode(ImageProcessingNode):
                 "image": ("IMAGE",),
             }
         }
-    
-    @property
-    def RETURN_TYPES(self) -> Tuple:
-        return ("FLOAT", "STRING")
-    
-    @property
-    def RETURN_NAMES(self) -> Tuple:
-        return ("aspect_ratio", "ratio_name")
-    
-    @property
-    def FUNCTION(self) -> str:
-        return "calculate_aspect_ratio"
     
     def calculate_aspect_ratio(self, image):
         """

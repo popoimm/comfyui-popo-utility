@@ -50,11 +50,39 @@ class NodeRegistry:
                         attr = getattr(module, attr_name)
                         if (isinstance(attr, type) and 
                             issubclass(attr, PopoBaseNode) and 
-                            attr != PopoBaseNode):
+                            attr != PopoBaseNode and
+                            not self._is_abstract_base_class(attr)):
                             self._register_node_class(attr)
                             
             except Exception as e:
                 print(f"加载节点模块 {modname} 时出错: {e}")
+    
+    def _is_abstract_base_class(self, node_class: Type[PopoBaseNode]) -> bool:
+        """
+        判断是否为抽象基类（不应该注册到ComfyUI中）
+        """
+        # 基类名称列表（这些类不应该显示在ComfyUI中）
+        base_class_names = {
+            'PopoBaseNode',
+            'ImageProcessingNode', 
+            'UtilityNode',
+            'TextProcessingNode',
+            'MathNode'
+        }
+        
+        class_name = node_class.__name__
+        
+        # 如果是基类名称列表中的类，则认为是抽象基类
+        if class_name in base_class_names:
+            return True
+        
+        # 检查是否没有实现必要的ComfyUI接口
+        required_attrs = ['RETURN_TYPES', 'RETURN_NAMES', 'FUNCTION']
+        for attr in required_attrs:
+            if not hasattr(node_class, attr):
+                return True
+        
+        return False
     
     def _register_node_class(self, node_class: Type[PopoBaseNode]) -> None:
         """

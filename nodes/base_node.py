@@ -3,11 +3,10 @@ ComfyUI Popo Utility - 节点基础类
 为所有自定义节点提供统一的接口和功能
 """
 
-from abc import ABC, abstractmethod
 from typing import Dict, Any, Tuple, List, Optional
 
 
-class PopoBaseNode(ABC):
+class PopoBaseNode:
     """
     Popo工具集节点的基础类
     所有自定义节点都应该继承这个类
@@ -21,40 +20,12 @@ class PopoBaseNode(ABC):
         self.node_id = self.__class__.__name__
     
     @classmethod
-    @abstractmethod
     def INPUT_TYPES(cls) -> Dict[str, Any]:
         """
         定义节点的输入类型
-        必须由子类实现
+        子类应该重写此方法
         """
-        pass
-    
-    @property
-    @abstractmethod
-    def RETURN_TYPES(self) -> Tuple:
-        """
-        定义节点的返回类型
-        必须由子类实现
-        """
-        pass
-    
-    @property
-    @abstractmethod
-    def RETURN_NAMES(self) -> Tuple:
-        """
-        定义节点的返回名称
-        必须由子类实现
-        """
-        pass
-    
-    @property
-    @abstractmethod
-    def FUNCTION(self) -> str:
-        """
-        定义节点的执行函数名
-        必须由子类实现
-        """
-        pass
+        return {"required": {}}
     
     def get_node_info(self) -> Dict[str, Any]:
         """
@@ -63,12 +34,12 @@ class PopoBaseNode(ABC):
         """
         return {
             "class_name": self.__class__.__name__,
-            "category": self.CATEGORY,
-            "description": self.DESCRIPTION,
-            "input_types": self.INPUT_TYPES(),
-            "return_types": self.RETURN_TYPES,
-            "return_names": self.RETURN_NAMES,
-            "function": self.FUNCTION,
+            "category": getattr(self.__class__, 'CATEGORY', 'popo-utility'),
+            "description": getattr(self.__class__, 'DESCRIPTION', ''),
+            "input_types": self.__class__.INPUT_TYPES(),
+            "return_types": getattr(self.__class__, 'RETURN_TYPES', ()),
+            "return_names": getattr(self.__class__, 'RETURN_NAMES', ()),
+            "function": getattr(self.__class__, 'FUNCTION', ''),
         }
     
     def log_error(self, error: Exception, context: str = "") -> None:
