@@ -5,6 +5,8 @@ ComfyUI Popo Utility - 直接节点实现
 
 import torch
 import numpy as np
+import math
+import re
 
 
 class PopoImageSizeNode:
@@ -148,19 +150,172 @@ class PopoImageAspectRatioNode:
             return f"1:{1/ratio:.2f} Portrait"
 
 
+class PopoMathExpressionNode:
+    """数学表达式计算节点"""
+    
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "a": ("FLOAT", {"default": 0.0, "min": -999999, "max": 999999, "step": 0.01}),
+                "b": ("FLOAT", {"default": 0.0, "min": -999999, "max": 999999, "step": 0.01}),
+                "c": ("FLOAT", {"default": 0.0, "min": -999999, "max": 999999, "step": 0.01}),
+                "expression": ("STRING", {"multiline": False, "default": "a + b + c"}),
+            }
+        }
+    
+    RETURN_TYPES = ("INT", "FLOAT")
+    RETURN_NAMES = ("result_int", "result_float")
+    FUNCTION = "calculate_expression"
+    CATEGORY = "popo-utility"
+    
+    def calculate_expression(self, a, b, c, expression):
+        """计算数学表达式"""
+        try:
+            # 安全的数学函数白名单
+            safe_functions = {
+                # 基础数学函数
+                'abs': abs,
+                'round': round,
+                'int': int,
+                'float': float,
+                'min': min,
+                'max': max,
+                'pow': pow,
+                
+                # math模块函数
+                'ceil': math.ceil,
+                'floor': math.floor,
+                'sqrt': math.sqrt,
+                'exp': math.exp,
+                'log': math.log,
+                'log10': math.log10,
+                'log2': math.log2,
+                'sin': math.sin,
+                'cos': math.cos,
+                'tan': math.tan,
+                'asin': math.asin,
+                'acos': math.acos,
+                'atan': math.atan,
+                'atan2': math.atan2,
+                'sinh': math.sinh,
+                'cosh': math.cosh,
+                'tanh': math.tanh,
+                'asinh': math.asinh,
+                'acosh': math.acosh,
+                'atanh': math.atanh,
+                'degrees': math.degrees,
+                'radians': math.radians,
+                'fabs': math.fabs,
+                'factorial': math.factorial,
+                'gcd': math.gcd,
+                'lcm': getattr(math, 'lcm', lambda x, y: abs(x * y) // math.gcd(x, y)),
+                
+                # 数学常数
+                'pi': math.pi,
+                'e': math.e,
+                'tau': math.tau,
+                'inf': math.inf,
+                'nan': math.nan,
+            }
+            
+            # 创建安全的执行环境
+            safe_dict = {
+                '__builtins__': {},
+                'a': float(a),
+                'b': float(b), 
+                'c': float(c),
+                **safe_functions
+            }
+            
+            # 验证表达式安全性
+            if not self._is_safe_expression(expression):
+                raise ValueError("表达式包含不安全的操作")
+            
+            # 计算表达式
+            result = eval(expression, safe_dict)
+            
+            # 确保结果是数字
+            if not isinstance(result, (int, float, complex)):
+                raise ValueError("表达式结果必须是数字")
+            
+            # 处理复数
+            if isinstance(result, complex):
+                if result.imag == 0:
+                    result = result.real
+                else:
+                    raise ValueError("不支持复数结果")
+            
+            # 处理特殊值
+            if math.isnan(result):
+                result = 0.0
+            elif math.isinf(result):
+                result = 999999.0 if result > 0 else -999999.0
+            
+            result_float = float(result)
+            result_int = int(result_float)
+            
+            return (result_int, result_float)
+            
+        except Exception as e:
+            print(f"PopoMathExpressionNode error: {e}")
+            return (0, 0.0)
+    
+    def _is_safe_expression(self, expression):
+        """检查表达式是否安全"""
+        # 禁止的关键词和操作
+        forbidden_patterns = [
+            r'import\s+',
+            r'__.*__',
+            r'eval\s*\(',
+            r'exec\s*\(',
+            r'open\s*\(',
+            r'file\s*\(',
+            r'input\s*\(',
+            r'raw_input\s*\(',
+            r'compile\s*\(',
+            r'globals\s*\(',
+            r'locals\s*\(',
+            r'vars\s*\(',
+            r'dir\s*\(',
+            r'getattr\s*\(',
+            r'setattr\s*\(',
+            r'hasattr\s*\(',
+            r'delattr\s*\(',
+            r'callable\s*\(',
+            r'isinstance\s*\(',
+            r'issubclass\s*\(',
+            r'super\s*\(',
+            r'type\s*\(',
+            r'classmethod\s*\(',
+            r'staticmethod\s*\(',
+            r'property\s*\(',
+        ]
+        
+        for pattern in forbidden_patterns:
+            if re.search(pattern, expression, re.IGNORECASE):
+                return False
+        
+        return True
+
+
 # ComfyUI需要的映射
 NODE_CLASS_MAPPINGS = {
     "PopoImageSizeNode": PopoImageSizeNode,
     "PopoImageDimensionsNode": PopoImageDimensionsNode,
     "PopoImageAspectRatioNode": PopoImageAspectRatioNode,
+    "PopoMathExpressionNode": PopoMathExpressionNode,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PopoImageSizeNode": "Popo Image Size",
     "PopoImageDimensionsNode": "Popo Image Dimensions", 
     "PopoImageAspectRatioNode": "Popo Image Aspect Ratio",
+    "PopoMathExpressionNode": "Popo Math Expression",
 }
 
 # 打印加载信息
 print("Popo Utility: Direct ComfyUI nodes loaded successfully!")
 print(f"Registered {len(NODE_CLASS_MAPPINGS)} nodes in 'popo-utility' category")
+for node_name in NODE_CLASS_MAPPINGS.keys():
+    print(f"  - {node_name}")

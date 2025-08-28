@@ -8,13 +8,15 @@ try:
     from .nodes_direct import (
         PopoImageSizeNode,
         PopoImageDimensionsNode, 
-        PopoImageAspectRatioNode
+        PopoImageAspectRatioNode,
+        PopoMathExpressionNode
     )
 except ImportError:
     from nodes_direct import (
         PopoImageSizeNode,
         PopoImageDimensionsNode, 
-        PopoImageAspectRatioNode
+        PopoImageAspectRatioNode,
+        PopoMathExpressionNode
     )
 
 # ComfyUI需要的映射
@@ -22,12 +24,14 @@ NODE_CLASS_MAPPINGS = {
     "PopoImageSizeNode": PopoImageSizeNode,
     "PopoImageDimensionsNode": PopoImageDimensionsNode,
     "PopoImageAspectRatioNode": PopoImageAspectRatioNode,
+    "PopoMathExpressionNode": PopoMathExpressionNode,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PopoImageSizeNode": "Popo Image Size",
     "PopoImageDimensionsNode": "Popo Image Dimensions", 
     "PopoImageAspectRatioNode": "Popo Image Aspect Ratio",
+    "PopoMathExpressionNode": "Popo Math Expression",
 }
 
 # 版本信息

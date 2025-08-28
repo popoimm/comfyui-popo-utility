@@ -38,7 +38,7 @@ git clone https://github.com/your-username/comfyui-popo-utility.git
 
 ## 🎯 节点说明
 
-### 🖼️ 图片长短边尺寸 (ImageSizeNode)
+### 🖼️ 图片长短边尺寸 (Popo Image Size)
 
 **功能**：获取图片的长边和短边尺寸
 
@@ -54,7 +54,7 @@ git clone https://github.com/your-username/comfyui-popo-utility.git
 - 图片缩放比例计算
 - 画面比例分析
 
-### 📏 图片详细尺寸 (ImageDimensionsNode)
+### 📏 图片详细尺寸 (Popo Image Dimensions)
 
 **功能**：获取图片的详细尺寸信息
 
@@ -71,6 +71,65 @@ git clone https://github.com/your-username/comfyui-popo-utility.git
 - 需要完整的图片尺寸信息
 - 图片布局计算
 - 分辨率分析
+
+### 📐 图片宽高比 (Popo Image Aspect Ratio)
+
+**功能**：计算图片的宽高比并识别常见比例
+
+**输入**：
+- `image` - 图片输入（IMAGE类型）
+
+**输出**：
+- `aspect_ratio` - 宽高比数值（FLOAT类型）
+- `ratio_name` - 比例名称（STRING类型）
+
+**使用场景**：
+- 图片比例分析
+- 自动识别常见画面比例（16:9、4:3等）
+- 横竖屏判断
+
+### 🧮 数学表达式计算 (Popo Math Expression)
+
+**功能**：支持动态数学表达式计算，兼容Python数学运算
+
+**输入**：
+- `a` - 数值参数A（FLOAT类型，默认值0.0）
+- `b` - 数值参数B（FLOAT类型，默认值0.0）
+- `c` - 数值参数C（FLOAT类型，默认值0.0）
+- `expression` - 数学表达式（STRING类型，默认"a + b + c"）
+
+**输出**：
+- `result_int` - 计算结果整数值（INT类型）
+- `result_float` - 计算结果浮点值（FLOAT类型）
+
+**支持的函数和常数**：
+- **基础运算**：`+`, `-`, `*`, `/`, `//`, `%`, `**`
+- **数学函数**：`sqrt`, `pow`, `abs`, `min`, `max`, `round`
+- **取整函数**：`ceil`, `floor`, `round`
+- **三角函数**：`sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `atan2`
+- **对数函数**：`log`, `log10`, `log2`, `exp`
+- **数学常数**：`pi`, `e`, `tau`, `inf`, `nan`
+- **其他函数**：`factorial`, `gcd`, `degrees`, `radians`
+
+**表达式示例**：
+- `a + b + c` - 三数相加
+- `sqrt(a*a + b*b)` - 计算斜边长度
+- `sin(radians(a))` - 角度的正弦值
+- `ceil(a / b)` - 向上取整除法
+- `max(a, b) if a > 0 else c` - 条件表达式
+- `pow(2, a) + log10(b)` - 幂运算与对数
+
+**安全特性**：
+- ✅ 支持完整的Python数学表达式
+- 🛡️ 安全沙箱执行，防止恶意代码
+- ⚡ 高性能计算，支持复杂嵌套表达式
+- 🔢 同时输出整数和浮点数结果
+
+**使用场景**：
+- 图片尺寸的动态计算
+- 复杂的数学变换
+- 条件分支计算
+- 自定义算法实现
 
 ## 🚀 性能优化
 
@@ -175,6 +234,31 @@ NODE_CLASSES = [HelloWorldNode]
                 [宽度/高度]    [长边/短边]
                      ↓              ↓
                 [不同的处理分支]
+```
+
+### 数学计算工作流
+
+```
+[数值输入A] → [数学表达式计算] → [整数结果]
+[数值输入B] →        │                  → [浮点结果]
+[数值输入C] →        │
+[表达式输入] →       │
+
+示例表达式:
+- "sqrt(a*a + b*b)" - 勾股定理计算
+- "ceil(a / b)" - 向上取整除法
+- "sin(radians(a))" - 角度转弧度后求正弦
+```
+
+### 综合工作流
+
+```
+[Load Image] → [图片详细尺寸] → [数学表达式计算]
+                     │                    │
+                   width,height         “a * 0.75”
+                     │                    │
+                     ↓                    ↓
+                 [其他节点]         [缩放数值]
 ```
 
 ## 🔧 技术细节
